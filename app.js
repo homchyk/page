@@ -800,7 +800,7 @@ app.page.home = function(){
 	//sample.update();
 	
 	for(i = 1; i < 32; i++){
-		sample.days.appendChild(create("a",0,0,i));
+		sample.days.appendChild(create("a",0,{"press":"on"},i));
 	}
 	sample.days.appendChild(create("a",0,0,""));
 	
@@ -1263,10 +1263,34 @@ app.page.info = function(data){
 	sample.send = function(){
 		html2canvas(this.children[0]).then( ( canvas ) => {
 			canvas.toBlob(function(blob){
-				saveAs(blob, name+".png");
+				sample.share(blob);
 			},'image/png');
 		});
 	};
+	sample.save = function(blob){
+		saveAs(blob, name+".png");
+	};
+	sample.share = function(blob){
+		let check = true;
+		if(!navigator.share) check = false; 
+		
+		let file = new File([blob], name+".png", { type: 'image/png' });
+		
+		if(check == true && (navigator.canShare && navigator.canShare({files:[file]}))){
+			try {
+				navigator.share({
+					title: app.lang("Поділитися інформацією про")+" "+name,
+					text: app.lang("Файл")+" "+name+".png",
+					files: [file],
+				});
+			} catch (err) {
+				check = false;
+				console.error('Помилка поділу:', err);
+			}
+		}
+		if(check == false) return this.save(blob);
+	}
+	
 	ux.modal({"content":sample,"theme":"modal-auto"}).open();
 };
 app.page.client = function(data,handler){
@@ -1341,7 +1365,7 @@ app.page.client = function(data,handler){
 			0: create("p","label",0,app.lang("Статус")),
 			1: ux.switch({"type":"radio","value":"","name":"status","label":app.lang("Інше")}),
 			2: ux.switch({"type":"radio","value":"missing","name":"status","label":app.lang("Відсутній")}),
-			3: ux.switch({"type":"radio","value":"waiting","name":"status","label":app.lang("Очикує")}),
+			3: ux.switch({"type":"radio","value":"waiting","name":"status","label":app.lang("Очікує")}),
 			4: ux.switch({"type":"radio","value":"paid","name":"status","label":app.lang("Виплачено")}),
 		}),
 		9: create("button","save",0,app.lang("Зберегти"))
