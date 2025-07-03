@@ -43,8 +43,8 @@
 	
 	<script>
     if ('serviceWorker' in navigator) {
-    /*navigator.serviceWorker.register('/sw.js', { scope: '/' })*/
-     navigator.serviceWorker.register('/sw.js', { scope: '/' })
+    /*navigator.serviceWorker.register('/page/sw.js', { scope: '/page/' })*/
+     navigator.serviceWorker.register('/page/sw.js', { scope: '/page/' })
         .then(reg => console.log('Service Worker зареєстровано', reg))
         .catch(err => console.error('Помилка реєстрації:', err));
     }
