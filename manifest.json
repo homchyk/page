@@ -3,7 +3,7 @@
   "short_name": "Пошта",
   "start_url": "/page/index.html",
   "display": "standalone",
-  "background_color": "#000",
+  "background_color": "#fff",
   "theme_color": "#f3f3f3",
   "icons": [
     {
