@@ -1,0 +1,184 @@
+/* UX VAR*/
+.ux-btn, .ux-btn svg, .ux-input-style, .ux-anim, .ux-anim-b:before {
+    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* INPUT */
+.ux-input-style {
+    padding: 0 10px;
+    margin: 0;
+    width: 100%;
+    height: 30px;
+    box-sizing: border-box;
+    outline: none;
+    font-size: 14px;
+    line-height: 28px;
+    border-radius: 3px;
+    border: 1px solid #e4e4e4;
+    background: #ffffff;
+    color: #656565;
+}
+
+.ux-input-style:focus {
+    border-color: #4caf50;
+}
+.ux-input-style:placeholder {
+    color: #e4e4e4;
+}
+/* BTN */
+.ux-btn {
+    display: inline-block;
+    min-width: 30px;
+    height: 30px;
+    cursor: pointer;
+    color: #fff;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+.ux-btn,
+.ux-btn p{
+    line-height: 28px;
+    font-size: 14px;
+}
+
+.ux-btn[disabled] {
+    cursor: default;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.ux-btn svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    stroke-linecap: square;
+    stroke-linecap: round;
+    stroke-width: 3px;
+}
+.ux-btn-def{
+    border: 1px solid #2196f3;
+    background-color: #2196f3;
+    color: #fff;
+}
+.ux-btn-def:hover{
+    border-color: #1d83d5;
+    background-color: #1d83d5;
+}
+.ux-btn-ok {
+    border: 1px solid #2196f3;
+    background-color: #2196f3;
+    color: #fff;
+}
+
+.ux-btn-ok:hover{
+    border-color: #1d83d5;
+    background-color: #1d83d5;
+}
+
+.ux-btn-cancel {
+    border: 1px solid #ff5722;
+    background-color: #ff5722;
+    color: #fff;
+}
+
+.ux-btn-cancel:hover{
+    border-color: #d4481b;
+    background-color: #d4481b;
+}
+.ux-btn-cancel svg,
+.ux-btn-def svg,
+.ux-btn-ok svg{
+	stroke: #fff;
+}
+.ux-btn-arrow svg {
+    stroke: #9a9a9a;
+    stroke-width: 2px;
+}
+
+.ux-btn-arrow:hover svg {
+    stroke: #454545;
+}
+
+/* ARROW */
+.ux-arrow {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    line-height: 0;
+}
+
+.ux-arrow svg {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.ux-arrow line {
+}
+
+.ux-arrow polygon {
+    fill: #fff;
+}
+
+/* VIEW */
+.ux-view {
+    position: absolute;
+    width: auto;
+    background-color: #fff;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+    box-shadow: 0px 0px 10px rgb(0 0 0 / 20%);
+    border-radius: 3px;
+}
+
+.ux-view[position="down"] .ux-arrow {
+    transform: rotate(0deg);
+    top: -15px;
+}
+
+.ux-view[position="up"] .ux-arrow {
+    transform: rotate(180deg);
+    bottom: -15px;
+}
+
+.ux-view[position="left"] .ux-arrow {
+    transform: rotate(90deg);
+    right: -15px;
+}
+
+.ux-view[position="right"] .ux-arrow {
+    transform: rotate(-90deg);
+    left: -15px;
+}
+
+/* BACKDROP */
+.ux-backdrop {
+    position: fixed;
+    z-index: 99;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.8);
+    background-color: rgb(0 0 0 / 80%);
+    overflow: auto;
+    opacity: 0;
+}
+.ux-backdrop.open{ 
+    opacity: 1;
+}
+.ux-backdrop{
+	/* scrollbar-width: thin; */
+	/* scrollbar-color: #2196f3 #fff0; */
+}
+.ux-backdrop::-webkit-scrollbar {
+  width: 5px;
+}
+.ux-backdrop::-webkit-scrollbar-track {
+  
+}
+.ux-backdrop::-webkit-scrollbar-thumb {
+  background-color: #2196f3;
+  border-radius: 3px; 
+
+}
