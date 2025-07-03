@@ -75,7 +75,7 @@ app.load = function(name){
 };
 // --- поділитися файлом (Поки відмовився)
 app.share = function(file){
-	/*
+	
 	let check = navigator.canShare && navigator.canShare({ files: [new File([], '')] });
 	
 	alert(check?"comp":"error");
@@ -101,7 +101,7 @@ app.share = function(file){
       alert('Ваш браузер не підтримує обмін файлами через Web Share API');
     }
   });
-	*/
+	
 };
 // --- Меню
 app.menu = function(){
@@ -633,89 +633,6 @@ app.import = function(file){
 app.export = function(){
 	database.export();
 };
-// --- Роздрукувати
-app.print = function(list){
-	let sample;
-	if(list instanceof Array == false) list = [];
-
-	sample = create("div","page-print");
-	sample.count = 0;
-	sample.preloader = create("div","preloader open",0,'<div><i class="fa-spin fa-spinner"></i></div>');
-	sample.paint = function(list){
-		let i,max,data,parent;
-		max = 10;
-		parent = null;
-		for(i = 0; i < list.length; i++){
-			if(parent == null || parent.children.length >= max){
-				parent = create("div","page-print-item");
-				this.appendChild(parent);
-			}
-			data = database.get(list[i],"client");
-			if(typeof data == "undefined") continue;
-			parent.appendChild(app.card.info(data));
-		}
-		
-		document.body.appendChild(this);
-		document.body.appendChild(this.preloader);
-		
-		this.send();
-	};
-	sample.pdf = new window.jspdf.jsPDF({
-		 orientation: 'landscape',
-		 unit: 'mm',
-		 format: 'a4',
-		 compress: true
-	});
-	sample.page = function(img){
-		let size;
-		this.count--;
-		
-		size = this.pdf.internal.pageSize.getWidth();
-		this.pdf.addImage(img, 'png', 0, 0, size, size * 0.54,undefined,'FAST');
-		
-		if(this.count == 0){
-			this.pdf.save('Карточки.pdf',{ compression: 'FAST' });
-			//this.pdf.output('dataurlnewwindow');
-			
-		}else{
-			this.pdf.addPage();
-		}
-		
-		if(this.count == 0){
-			if(this.parentNode != null){
-				this.parentNode.removeChild(this);
-			}
-			if(this.preloader.parentNode != null){
-				this.preloader.parentNode.removeChild(this.preloader);
-			}
-		}
-	};
-	sample.send = function(){
-		let i,pdf;
-		
-		pdf = new window.jspdf.jsPDF('landscape');
-		this.count = this.children.length;
-		for(i = 0; i < this.children.length; i++){
-			html2canvas(this.children[i]).then(function(canvas){
-				
-				sample.page(canvas.toDataURL("image/png"));
-/*
-html2canvas($0).then(function(canvas){
-
-	canvas.toBlob(function(blob){
-		saveAs(blob, "Сторінка.png");
-	},'image/png');
-
-});
-*/
-			});
-		}
-	}
-	
-	
-
-	sample.paint(list);
-};
 // --- сторінки
 app.page.home = function(){
 	let i,day,sample;
@@ -775,7 +692,7 @@ app.page.home = function(){
 		[].forEach.call(this.querySelectorAll(".card"),function(a){
 			list.push(a.data.key);
 		});
-		app.print(list);
+		app.page.print(list);
 	};
 	sample.select = function(){
 		let list = [];
@@ -1274,7 +1191,7 @@ app.page.info = function(data){
 		let check = true;
 		if(!navigator.share) check = false; 
 		
-		let file = new File([blob], name+".png", { type: 'image/png' });
+		let file = new File([blob], name+".png", {type: 'image/png'});
 		
 		if(check == true && (navigator.canShare && navigator.canShare({files:[file]}))){
 			try {
@@ -1292,6 +1209,111 @@ app.page.info = function(data){
 	}
 	
 	ux.modal({"content":sample,"theme":"modal-auto"}).open();
+};
+// --- Роздрукувати
+app.page.print = function(list){
+	let sample,name;
+	if(list instanceof Array == false) list = [];
+	
+	name = 'Карточки.pdf';
+	
+	sample = create("div","page-print");
+	sample.count = 0;
+	sample.preloader = create("div","preloader open",0,'<div><i class="fa-spin fa-spinner"></i></div>');
+	sample.paint = function(list){
+		let i,max,data,parent;
+		max = 10;
+		parent = null;
+		for(i = 0; i < list.length; i++){
+			if(parent == null || parent.children.length >= max){
+				parent = create("div","page-print-item");
+				this.appendChild(parent);
+			}
+			data = database.get(list[i],"client");
+			if(typeof data == "undefined") continue;
+			parent.appendChild(app.card.info(data));
+		}
+		
+		document.body.appendChild(this);
+		document.body.appendChild(this.preloader);
+		
+		this.compile();
+	};
+	sample.pdf = new window.jspdf.jsPDF({
+		 orientation: 'landscape',
+		 unit: 'mm',
+		 format: 'a4',
+		 compress: true
+	});
+	sample.page = function(img){
+		let size;
+		this.count--;
+		
+		size = this.pdf.internal.pageSize.getWidth();
+		this.pdf.addImage(img, 'png', 0, 0, size, size * 0.54,undefined,'FAST');
+		
+		if(this.count == 0){
+			this.share(this.pdf.output("blob"));
+		}else{
+			this.pdf.addPage();
+		}
+		
+		if(this.count == 0){
+			if(this.parentNode != null){
+				this.parentNode.removeChild(this);
+			}
+			if(this.preloader.parentNode != null){
+				this.preloader.parentNode.removeChild(this.preloader);
+			}
+		}
+	};
+	sample.compile = function(){
+		let i,pdf;
+		
+		pdf = new window.jspdf.jsPDF('landscape');
+		this.count = this.children.length;
+		for(i = 0; i < this.children.length; i++){
+			html2canvas(this.children[i]).then(function(canvas){
+				
+				sample.page(canvas.toDataURL("image/png"));
+/*
+html2canvas($0).then(function(canvas){
+
+	canvas.toBlob(function(blob){
+		saveAs(blob, "Сторінка.png");
+	},'image/png');
+
+});
+*/
+			});
+		}
+	}
+	
+	sample.save = function(){
+		this.pdf.save(name,{ compression: 'FAST' });
+	};
+	sample.share = function(blob){
+		let check = true;
+		if(!navigator.share) check = false; 
+		
+		let file = new File([blob], name+".pdf", {type: 'application/pdf'});
+		
+		if(check == true && (navigator.canShare && navigator.canShare({files:[file]}))){
+			try {
+				navigator.share({
+					title: app.lang("Карточки з інформацією"),
+					text: app.lang("Файл")+" "+name+".pdf",
+					files: [file],
+				});
+			} catch (err) {
+				check = false;
+				console.error('Помилка поділу:', err);
+			}
+		}
+		if(check == false) return this.save(blob);
+	}
+
+	sample.paint(list);
 };
 app.page.client = function(data,handler){
 	let sample,street,i,add = data instanceof Object == false;
