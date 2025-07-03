@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+	<meta charset="utf-8">
+	<title>Укр. пошта</title>
+	<link rel="manifest" href="manifest.json">
+  	<meta name="theme-color" content="#f3f3f3">
+  
+	<link rel="icon" href="favicon.png" type="image/png">
+	<link rel="shortcut icon" href="favicon.png" type="image/png">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, minimal-ui" >
+	
+	<link rel="stylesheet" href="fontawesome/font-awesome.css" >
+	
+	<link rel="stylesheet" href="module/alert/style.css" >
+	<script src="module/alert/script.js"></script>
+	
+	<link rel="stylesheet" href="module/pagination/style.css" >
+	<script src="module/pagination/script.js"></script>
+	
+	<link rel="stylesheet" href="module/ux/main.css" >
+	<script src="module/ux/main.js"></script>
+	
+	<link rel="stylesheet" href="module/ux/rsc.css" >
+	<script src="module/ux/rsc.js"></script>
+	
+	<link rel="stylesheet" href="module/ux/modal.css" >
+	<script src="module/ux/modal.js"></script>
+	
+	<link rel="stylesheet" href="app.css" >
+</head>
+<body>
+	<script src="module/filesaver.js"></script>
+	<script src="module/html2canvas.js"></script>
+	<script src="module/jspdf.js"></script>
+	
+	<script src="script.js"></script>
+	<script src="app.js"></script>
+	<script src="lang.js"></script>
+	<script src="street.js"></script>
+	<script>app.init()</script>
+	
+	<script>
+    if ('serviceWorker' in navigator) {
+    /*navigator.serviceWorker.register('/sw.js', { scope: '/' })*/
+     navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        .then(reg => console.log('Service Worker зареєстровано', reg))
+        .catch(err => console.error('Помилка реєстрації:', err));
+    }
+  </script>
+
+</body>
+</html>
