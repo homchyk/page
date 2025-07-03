@@ -30,7 +30,7 @@ body {
     margin: 0px;
     padding: 0;
     padding-bottom: 17vmin;
-    font-weight: 300;
+    font-weight: 400;
     font-size: 4vmin;
     line-height: 5vmin;
     font-family: Arial, sans-serif;
@@ -892,7 +892,7 @@ button.refute.press {
 
 .find .item span {
     display: block;
-    font-size: 4vmin;
+    font-size: 5vmin;
     line-height: 1.2;
 }
 
@@ -1205,12 +1205,12 @@ button.refute.press {
 .page-calculator .result .item {
     display: table;
     box-sizing: border-box;
-    padding: 0 6vmin;
+    padding: 0 9vmin;
     margin: 0 0 2vmin;
     border-radius: 5vmin;
-    font-size: 5vmin;
-    line-height: 7vmin;
-    min-height: 7vmin;
+    font-size: 6vmin;
+    line-height: 10vmin;
+    min-height: 10vmin;
     background-color: #fff;
     direction: ltr;
     position: relative;
@@ -1230,12 +1230,12 @@ button.refute.press {
 
 .page-calculator .result .item .del {
     position: absolute;
-    top: 1vmin;
-    right: 1vmin;
-    width: 5vmin;
-    height: 5vmin;
-    font-size: 3vmin;
-    line-height: 5vmin;
+    top: 0;
+    right: 0;
+    width: 8vmin;
+    height: 10vmin;
+    font-size: 4vmin;
+    line-height: 10vmin;
     text-align: center;
     border-radius: 100%;
     background-color: rgb(0 0 0 / 0%);
@@ -1351,7 +1351,7 @@ button.refute.press {
     text-align: center;
     border-left: none;
     border-bottom: none;
-    transition: all 200ms ease-out;
+    transition: all 200ms cubic-bezier(0.4, 0, 1, 1);
 }
 .page-calculator .numpad a.press{
     background: #09415b;
@@ -1469,7 +1469,8 @@ button.refute.press {
 }
 
 .find-select {
-    width: 50vw;
+    width: 70vw;
+    text-align: right;
 }
 
 .find-select .item {
@@ -1491,8 +1492,12 @@ button.refute.press {
     text-align: center;
     border-left: none;
     border-bottom: none;
+     transition: all 200ms cubic-bezier(0.4, 0, 1, 1);
 }
-
+.page-days a.press{
+     background: #09415b;
+    color: #fff;
+}
 .page-home {
     padding: 1px 0 0;
 }
