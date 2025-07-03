@@ -2,36 +2,36 @@ const CACHE_NAME = 'cache-v1';
 
 // Список файлів, які треба закешувати при встановленні (додай сюди свої)
 const FILES_TO_CACHE = [
-  '/manifest.json',
-  '/icons/192.png',
-  '/icons/512.png',
-  '/favicon.png',
-  '/index.html',
-  '/app.css',
-  '/app.js',
-  '/script.js',
-  '/street.js',
-  '/lang.js',
-  '/fontawesome/font-awesome.css',
-  '/fontawesome/FontAwesome.otf',
-  '/fontawesome/fontawesome-webfont.eot',
-  '/fontawesome/fontawesome-webfont.woff',
-  '/fontawesome/fontawesome-webfont.woff2',
-  '/fontawesome/fontawesome-webfont.ttf',
-  '/fontawesome/fontawesome-webfont.svg',
-  '/module/filesaver.js',
-  '/module/html2canvas.js',
-  '/module/jspdf.js',
-  '/module/alert/script.js',
-  '/module/alert/style.css',
-  '/module/pagination/script.js',
-  '/module/pagination/style.css',
-  '/module/ux/main.js',
-  '/module/ux/main.css',
-  '/module/ux/rsc.js',
-  '/module/ux/rsc.css',
-  '/module/ux/modal.js',
-  '/module/ux/modal.css'
+  '/page/manifest.json',
+  '/page/icons/192.png',
+  '/page/icons/512.png',
+  '/page/favicon.png',
+  '/page/index.html',
+  '/page/app.css',
+  '/page/app.js',
+  '/page/script.js',
+  '/page/street.js',
+  '/page/lang.js',
+  '/page/fontawesome/font-awesome.css',
+  '/page/fontawesome/FontAwesome.otf',
+  '/page/fontawesome/fontawesome-webfont.eot',
+  '/page/fontawesome/fontawesome-webfont.woff',
+  '/page/fontawesome/fontawesome-webfont.woff2',
+  '/page/fontawesome/fontawesome-webfont.ttf',
+  '/page/fontawesome/fontawesome-webfont.svg',
+  '/page/module/filesaver.js',
+  '/page/module/html2canvas.js',
+  '/page/module/jspdf.js',
+  '/page/module/alert/script.js',
+  '/page/module/alert/style.css',
+  '/page/module/pagination/script.js',
+  '/page/module/pagination/style.css',
+  '/page/module/ux/main.js',
+  '/page/module/ux/main.css',
+  '/page/module/ux/rsc.js',
+  '/page/module/ux/rsc.css',
+  '/page/module/ux/modal.js',
+  '/page/module/ux/modal.css'
   
 ];
 
@@ -80,7 +80,7 @@ self.addEventListener('fetch', event => {
           .catch(() => {
             // Якщо немає інтернету — повертаємо offline.html
             if (event.request.mode === 'navigate') {
-              return caches.match('/index.html');
+              return caches.match('/page/index.html');
             }
           });
       })
