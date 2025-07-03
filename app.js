@@ -11,8 +11,8 @@ app.init = function(data){
 
 	document.body.appendChild(app.menu);
 
-	//app.load("stanislav");
-	app.load("test");
+	app.load("stanislav");
+	//app.load("test");
 
 	app.switch('home');
 	
@@ -63,7 +63,7 @@ app.switch = function(name,option){
 // --- завантаження данних
 app.load = function(name){
 	let k;
-	//if(["stanislav","myrolyubovka"].indexOf(name) == -1) return false;
+	if(["stanislav","myrolyubovka"].indexOf(name) == -1) return false;
 	app.slected = name;
 	database.load(name);
 	// --- Переключажмо всі данні
@@ -468,7 +468,7 @@ app.ux.search = function(option){
 	return sample;
 };
 app.ux.find = function(option){
-	let k,item,sample;
+	let sample;
 	
 	option = verify({
 		"select": "function",
@@ -497,6 +497,20 @@ app.ux.find = function(option){
 		if(this.children.length > 0) this.view.open();
 		else this.view.close(); 
 	};
+	sample.update = function(data){
+		let k,item;
+		if(typeof option.data != "object") return;
+		this.list = new Object();
+		for(k in data){
+			item = create("div","item",0,data[k],function(){
+				sample.select(this.key,this);
+				sample.view.close();
+			});
+			item.key = k;
+			item.text = item.textContent.toLocaleLowerCase();
+			this.list[k] = item;
+		}
+	};
 	sample.view = ux.view(sample,{
 		"theme": option.theme,
 		"parent": option.parent,
@@ -504,17 +518,8 @@ app.ux.find = function(option){
 		"arrow": true
 	});
 	
-	if(typeof option.data == "object"){
-		for(k in option.data){
-			item = create("div","item",0,option.data[k],function(){
-				sample.select(this.key,this);
-				sample.view.close();
-			});
-			item.key = k;
-			item.text = item.textContent.toLocaleLowerCase();
-			sample.list[k] = item;
-		}
-	}
+	
+	sample.update(option.data);
 
 	return sample;
 };
@@ -1022,16 +1027,7 @@ app.page.calculator = function(){
 	return sample;
 };
 app.page.select = function(){
-	let sample,data,list;
-	
-	data = database.select({},"client");
-	list = new Object();
-	for(k in data){
-		list[k] = create("div",0,0,{
-			0: create("span",0,0,data[k]["name"]),
-			1: create("p",0,0,data[k]["street"]+" <b>"+data[k]["house"]+"</b>"),
-		});
-	}
+	let sample;
 
 	sample = create("div","page-select");
 	sample.total =  create("div","total",0,[create("p",0,0,app.lang("Загально")),create("span")]),
@@ -1054,7 +1050,7 @@ app.page.select = function(){
 				sample.add(key);
 			}
 		},
-		"find": list,
+		"find": null,
 		"theme": "find-select",
 		"placeholder": app.lang("Додати")
 	});
@@ -1143,6 +1139,7 @@ app.page.select = function(){
 		let i;
 		if(list instanceof Array == false) list = [];
 		this.clear();
+		this.updateFind();
 		for(i = 0; i < list.length; i++){
 			if(this.list.indexOf(list[i]) == -1){
 				this.list.push(list[i]);
@@ -1150,6 +1147,19 @@ app.page.select = function(){
 			}
 		}
 		this.calc();
+	};
+	// ---
+	sample.updateFind = function(){
+		let k,data,list;
+		data = database.select({},"client");
+		list = new Object();
+		for(k in data){
+			list[k] = create("div",0,0,{
+				0: create("span",0,0,data[k]["name"]),
+				1: create("p",0,0,data[k]["street"]+" <b>"+data[k]["house"]+"</b>"),
+			});
+		}
+		this.search.find.update(list);
 	};
 	
 	create(sample,0,0,{
@@ -1414,6 +1424,11 @@ app.page.client = function(data,handler){
 
 		if(typeof this.handler == "function"){
 			this.handler(data);
+		}
+		
+		// --- оновлення в find
+		if(app.page.ready.select instanceof Node){
+			app.page.ready.select.updateFind();
 		}
 	};
 	sample.onsubmit = function(e){
