@@ -442,7 +442,8 @@ app.ux.search = function(option){
 	sample = create("form","search",0,{
 		0: create("input",0,{"type":"text","name":"text","placeholder":option["placeholder"]},""),
 		1: create("a","btn fa-search",0,"",function(){
-			this.parentNode.handler(this.parentNode.elements.text.value)
+			if(this.classList.contains("clear")) sample.clear();
+			else sample.search();
 		}),
 	},{
 		"onsubmit": function(e){
@@ -450,10 +451,24 @@ app.ux.search = function(option){
 			this.handler(this.elements.text.value);
 		},
 		"oninput": function(){
-			this.find.search(this.elements.text.value);
-			this.handler(this.elements.text.value);
+			let btn,value = this.elements.text.value;
+
+			if(value != "") btn = "btn clear fa-remove";
+			else btn = "btn fa-search";
+
+			if(this.children[1].className != btn) this.children[1].className = btn;
+			
+			this.find.search(value);
+			this.handler(value);
 		}
 	});
+	sample.search = function(){
+		this.handler(this.elements.text.value);
+	};
+	sample.clear = function(){
+		this.elements.text.value = "";
+		this.children[1].className = "btn fa-search";
+	};
 	sample.handler = typeof option.handler == "function" ? option.handler : function(){};
 	sample.select = typeof option.select == "function" ? option.select : function(){};
 	sample.find = this.find({
@@ -709,10 +724,20 @@ app.page.home = function(){
 	sample.update = function(){
 		this.bar.children[1].setAttribute("day",this.day);
 		
-		let k,data = new Object();
-		data = database.select({
-			"appointed": this.day
-		},"client");
+		let k,where,data;
+		
+		where = {
+			"number": this.day
+		};
+		
+		if(app.slected == "stanislav"){
+			where = {
+				"appointed": this.day
+			};
+		}
+		
+
+		data = database.select(where,"client");
 		this.innerHTML = "";
 		for(k in data){
 			this.appendChild(this.item(data[k]));
@@ -846,7 +871,8 @@ app.page.calculator = function(){
 		0: create("button",0,0,app.lang("Пенсія"),function(){sample.switch("pension")}),
 		1: create("button",0,0,app.lang("Доплата"),function(){sample.switch("over")}),
 		2: create("button",0,0,app.lang("Субсидія"),function(){sample.switch("subsidy")}),
-		3: create("button",0,0,app.lang("Страхове"),function(){sample.switch("insurance")})
+		3: create("button",0,0,app.lang("Страхове"),function(){sample.switch("insurance")}),
+		4: create("button",0,0,app.lang("Товар"),function(){sample.switch("tovar")})
 	}));
 	sample.numpad = create("div","numpad",0,[
 		create("a",0,{"press":"on"},"7"),
@@ -873,6 +899,7 @@ app.page.calculator = function(){
 		"over": {},
 		"subsidy": {},
 		"insurance": {},
+		"tovar": {},
 	};
 	sample.key = null;
 	sample.current = null;
@@ -990,6 +1017,7 @@ app.page.calculator = function(){
 		else if(key == "over") label = app.lang("Доплата");
 		else if(key == "subsidy") label = app.lang("Субсидія");
 		else if(key == "insurance") label = app.lang("Страхове");
+		else if(key == "tovar") label = app.lang("Товар");
 		// ---
 		this.result.innerHTML = "";
 		for(k in this.data[key]){
@@ -1050,6 +1078,7 @@ app.page.select = function(){
 				sample.add(key);
 			}
 		},
+		"clear": true,
 		"find": null,
 		"theme": "find-select",
 		"placeholder": app.lang("Додати")
@@ -1220,10 +1249,14 @@ app.page.info = function(data){
 	
 	ux.modal({"content":sample,"theme":"modal-auto"}).open();
 };
-// --- Роздрукувати
 app.page.print = function(list){
 	let sample,name;
 	if(list instanceof Array == false) list = [];
+	
+	if(list.length == 0){
+		alert.push("info",app.lang("Друк"),app.lang("Список порожній"));
+		return;
+	}
 	
 	name = 'Карточки.pdf';
 	
@@ -1369,24 +1402,24 @@ app.page.client = function(data,handler){
 		}),
 		4: create("div","form-group",0,{
 			0: create("p","label",0,app.lang("День пенсії")),
-			1: create("input",0,{"type":"number","name":"number"})
+			1: create("input",0,{"type":"number","name":"number","step":1})
 		}),
 		5: create("div","group panel",0,{
 			0: create("div","form-group",0,{
 				0: create("p","label",0,app.lang("Пенсія")),
-				1: create("input",0,{"type":"number","name":"pension"})
+				1: create("input",0,{"type":"number","name":"pension","step":0.01})
 			}),
 			1: create("div","form-group",0,{
 				0: create("p","label",0,app.lang("Доплата")),
-				1: create("input",0,{"type":"number","name":"over"})
+				1: create("input",0,{"type":"number","name":"over","step":0.01})
 			}),
 			2: create("div","form-group",0,{
 				0: create("p","label",0,app.lang("Субсидія")),
-				1: create("input",0,{"type":"number","name":"subsidy"})
+				1: create("input",0,{"type":"number","name":"subsidy","step":0.01})
 			}),
 			3: create("div","form-group",0,{
 				0: create("p","label",0,app.lang("Страхова")),
-				1: create("input",0,{"type":"number","name":"insurance"})
+				1: create("input",0,{"type":"number","name":"insurance","step":0.01})
 			})
 		}),
 		6: create("div","appointed panel",0,{
