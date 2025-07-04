@@ -550,7 +550,7 @@ app.card = function(data,type){
 		["pension","over","subsidy","insurance"].forEach(function(k){
 			if(data[k] > 0){
 				total += data[k];
-				group.appendChild(create("span","plug",{"type":k},data[k]));
+				group.appendChild(create("span","plug",{"type":k},round(data[k],2)));
 			}
 		});
 
