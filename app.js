@@ -623,10 +623,12 @@ app.clear = function(){
 app.import = function(file){
 	database.import(file);
 	database.save();
+	alert.push("comp",app.lang("Імпортовано"));
 };
 // --- експорт данних
 app.export = function(){
 	database.export();
+	alert.push("comp",app.lang("Експортовано"));
 };
 // --- сторінки
 app.page.home = function(){
