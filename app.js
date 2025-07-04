@@ -75,33 +75,7 @@ app.load = function(name){
 };
 // --- поділитися файлом (Поки відмовився)
 app.share = function(file){
-	
-	let check = navigator.canShare && navigator.canShare({ files: [new File([], '')] });
-	
-	alert(check?"comp":"error");
-	
-	
-	document.getElementById('shareFileBtn').addEventListener('click', async () => {
-    if (navigator.canShare && navigator.canShare({ files: [] })) {
-      const response = await fetch('image.jpg'); // або будь-який інший файл
-      const blob = await response.blob();
-      const file = new File([blob], 'image.jpg', { type: blob.type });
-
-      try {
-        await navigator.share({
-          title: 'Дивись це фото!',
-          text: 'Я поділився файлом з тобою',
-          files: [file]
-        });
-        console.log('Файл поділено!');
-      } catch (error) {
-        console.error('Не вдалося поділитися файлом:', error);
-      }
-    } else {
-      alert('Ваш браузер не підтримує обмін файлами через Web Share API');
-    }
-  });
-	
+		
 };
 // --- Меню
 app.menu = function(){
@@ -872,7 +846,8 @@ app.page.calculator = function(){
 		1: create("button",0,0,app.lang("Доплата"),function(){sample.switch("over")}),
 		2: create("button",0,0,app.lang("Субсидія"),function(){sample.switch("subsidy")}),
 		3: create("button",0,0,app.lang("Страхове"),function(){sample.switch("insurance")}),
-		4: create("button",0,0,app.lang("Товар"),function(){sample.switch("tovar")})
+		4: create("button",0,0,app.lang("Товар"),function(){sample.switch("tovar")}),
+		5: create("button",0,0,app.lang("Інше"),function(){sample.switch("other")})
 	}));
 	sample.numpad = create("div","numpad",0,[
 		create("a",0,{"press":"on"},"7"),
@@ -900,6 +875,7 @@ app.page.calculator = function(){
 		"subsidy": {},
 		"insurance": {},
 		"tovar": {},
+		"other": {},
 	};
 	sample.key = null;
 	sample.current = null;
@@ -1018,6 +994,7 @@ app.page.calculator = function(){
 		else if(key == "subsidy") label = app.lang("Субсидія");
 		else if(key == "insurance") label = app.lang("Страхове");
 		else if(key == "tovar") label = app.lang("Товар");
+		else if(key == "other") label = app.lang("Інше");
 		// ---
 		this.result.innerHTML = "";
 		for(k in this.data[key]){
@@ -1300,15 +1277,6 @@ app.page.print = function(list){
 		}else{
 			this.pdf.addPage();
 		}
-		
-		if(this.count == 0){
-			if(this.parentNode != null){
-				this.parentNode.removeChild(this);
-			}
-			if(this.preloader.parentNode != null){
-				this.preloader.parentNode.removeChild(this.preloader);
-			}
-		}
 	};
 	sample.compile = function(){
 		let i,pdf;
@@ -1353,7 +1321,17 @@ html2canvas($0).then(function(canvas){
 				console.error('Помилка поділу:', err);
 			}
 		}
-		if(check == false) return this.save(blob);
+		
+		if(check == false){
+			this.save(blob);
+		}
+		// --- Видалення
+		if(this.parentNode != null){
+			this.parentNode.removeChild(this);
+		}
+		if(this.preloader.parentNode != null){
+			this.preloader.parentNode.removeChild(this.preloader);
+		}
 	}
 
 	sample.paint(list);
