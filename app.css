@@ -1465,7 +1465,7 @@ button.refute.press {
 
 .bar-select .search {
     display: inline-block;
-    width: calc(100% - 12vmin);
+    width: calc(100% - 10vmin);
 }
 
 .find-select {
