@@ -622,6 +622,7 @@ app.clear = function(){
 // --- імпорт данних
 app.import = function(file){
 	database.import(file);
+	database.save();
 };
 // --- експорт данних
 app.export = function(){
