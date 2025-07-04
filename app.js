@@ -563,7 +563,7 @@ app.card = function(data,type){
 		this.children[2].innerHTML = "";
 		this.children[2].appendChild(group);
 		
-		this.children[3].innerHTML = total+" ₴"
+		this.children[3].innerHTML = round(total,2)+" ₴"
 
 	};
 
