@@ -1,6 +1,6 @@
-const CACHE_NAME = 'cache-v1.3.2';
+const CACHE_NAME = 'cache-v1.3.3';
 
-// Список файлів, які треба закешувати при встановленні (додай сюди свої)
+// Список файлів, які треба закешувати при встановленні
 const FILES_TO_CACHE = [
   '/page/manifest.json',
   '/page/icons/192.png',
