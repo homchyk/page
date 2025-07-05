@@ -407,6 +407,7 @@ alert {
     left: 10%;
     padding: 4vmin;
     box-shadow: 0px 3px 15px 0px rgb(0 0 0 / 17%);
+    user-select: none;
 }
 
 alert > * {
@@ -489,11 +490,9 @@ backdrop,
 backdrop.open, .preloader {
     opacity: 1;
 }
-
 backdrop, .preloader, .ux-backdrop {
     background-color: rgb(16 46 61 / 70%);
 }
-
 backdrop.transparent, .ux-backdrop.transparent {
     background-color: rgb(255 255 255 / 0%);
 }
@@ -513,7 +512,6 @@ backdrop.transparent, .ux-backdrop.transparent {
     color: #fbad18;
 }
 
-
 bar {
     position: fixed;
     left: 50%;
@@ -528,7 +526,6 @@ bar {
     transition: bottom 200ms cubic-bezier(0, 0, 0.62, 1.47);
     /* padding: 0 2vmin; */
 }
-
 bar .btn {
     border-radius: 5vmin;
 }
@@ -536,7 +533,6 @@ bar .btn {
 .bar-show bar {
     bottom: 22vmin;
 }
-
 .bar-show body {
     padding-bottom: 38vmin;
 }
@@ -558,7 +554,6 @@ nav {
     box-sizing: border-box;
     height: 17vmin;
 }
-
 nav:after {
     content: "";
     background-color: #f3f3f3;
@@ -568,7 +563,6 @@ nav:after {
     left: 0;
     bottom: 100%;
 }
-
 nav .item {
     position: relative;
     display: inline-block;
@@ -579,7 +573,6 @@ nav .item {
     transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
 }
-
 nav .item i {
     position: relative;
     display: inline-block;
@@ -592,7 +585,6 @@ nav .item i {
     text-align: center;
     transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 nav .item span {
     position: absolute;
     display: block;
@@ -605,11 +597,9 @@ nav .item span {
     left: 50%;
     transform: translate3d(-50%, 0px, 0px);
 }
-
 nav .item.active span {
     color: #000000;
 }
-
 nav .item.active i {
     color: #fbad18;
 }
@@ -627,17 +617,14 @@ button {
     cursor: pointer;
     transition: all 250ms linear;
 }
-
 button.press {
     background-color: #d8d8d8;
 }
-
 button.confirm.press {
     border-color: #4caf50;
     background-color: #4caf50;
     color: #fff
 }
-
 button.refute.press {
     border-color: #FFC107;
     background-color: #FFC107;
@@ -660,26 +647,21 @@ button.refute.press {
     text-decoration: none;
     transition: all 250ms linear;
 }
-
 .btn:empty {
     margin: 0;
     padding: 0;
     width: 10vmin;
     height: 10vmin;
 }
-
 .btn.press {
     background-color: #e1e1e1;
 }
-
 .btn.edit.press {
     color: #4caf50;
 }
-
 .btn.del.press {
     color: #FF5722;
 }
-
 .btn[disabled] {
     opacity: 0.5;
     pointer-events: none;
@@ -698,7 +680,6 @@ button.refute.press {
     /* margin-bottom: 5px; */
     box-sizing: border-box;
 }
-
 .form-group, .group-form {
     display: table;
     width: 100%;
@@ -707,7 +688,6 @@ button.refute.press {
     letter-spacing: 0;
     line-height: 0;
 }
-
 .panel {
     display: inline-block;
     vertical-align: top;
@@ -720,7 +700,6 @@ button.refute.press {
     border-radius: 5px;
     background-color: #fbfbfb;
 }
-
 .plug {
     display: inline-block;
     font-size: 3vmin;
@@ -741,7 +720,6 @@ button.refute.press {
     padding: 1vmin 0;
     padding-right: 10vmin;
 }
-
 .search input {
     border: none;
     background: transparent;
@@ -749,12 +727,10 @@ button.refute.press {
     margin: 0;
     text-align: right;
 }
-
 .search input:focus {
     outline: none;
     border-color: #00bcd4;
 }
-
 .search a {
     /* display: block; */
     position: absolute;
@@ -766,7 +742,6 @@ button.refute.press {
     /* text-align: center; */
     /* line-height: 30px; */
 }
-
 .search a.press {
     background-color: #83beec;
 }
@@ -777,7 +752,6 @@ button.refute.press {
     display: table;
     width: 100%;
 }
-
 .datatable .item {
     width: 100%;
     display: table;
@@ -786,18 +760,15 @@ button.refute.press {
     position: relative;
     box-sizing: border-box;
 }
-
 .datatable .item:not(:last-child) {
     /* border-bottom: 1px dashed #898989; */
 }
-
 .datatable .item > * {
     display: inline-block;
     vertical-align: middle;
     margin: 0;
     box-sizing: border-box;
 }
-
 .datatable .item .option {
     width: 8vmin;
     height: 8vmin;
@@ -810,7 +781,6 @@ button.refute.press {
     font-size: 4vmin;
     cursor: pointer;
 }
-
 .datatable .item .option.press {
     color: #898989;
 }
@@ -820,7 +790,6 @@ button.refute.press {
     width: 200px;
     width: auto;
 }
-
 .datatable-option > *, .datatable-option > *[class*="ux-"] {
     display: block;
     padding: 1.3vmin 2vmin;
@@ -829,42 +798,35 @@ button.refute.press {
     width: 100%;
     box-sizing: border-box;
 }
-
 .datatable-option > a {
     cursor: pointer;
 }
 .datatable-option > a *{
     pointer-events: none;
 }
-
 .datatable-option font, .datatable-option font + * {
     display: inline-block;
     vertical-align: middle;
 }
-
 .datatable-option font {
     width: 6vmin;
     line-height: 6vmin;
     height: 6vmin;
     text-align: center;
 }
-
 .datatable-option font + * {
     width: calc(100% - 7vmin);
     box-sizing: border-box;
     padding: 0 0 0 1vmin;
     font-size: 3.5vmin;
 }
-
 .datatable-option > a.press {
     /* color: #2196F3; */
     background-color: #f3f3f3;
 }
-
 .datatable-option > *:first-child {
     margin: 0;
 }
-
 .datatable-option > line {
     display: block;
     height: 1px;
@@ -873,7 +835,6 @@ button.refute.press {
     margin: 0;
     background-color: #efefef;
 }
-
 .datatable-option > a.active {
     color: #fbad18;
 }
@@ -883,30 +844,25 @@ button.refute.press {
     box-sizing: border-box;
     padding: 2vmin;
 }
-
 .find .item {
     border-bottom: 1px dashed #d8d8d8;
     font-size: 4vmin;
     line-height: 2;
 }
-
 .find .item:last-child {
     border: none;
 }
-
 .find .item span {
     display: block;
     font-size: 5vmin;
     line-height: 1.2;
 }
-
 .find .item p {
     display: block;
     font-size: 3vmin;
     line-height: 1;
     color: #7b7b7b;
 }
-
 .find .item b {
     font-weight: 600;
     color: #000;
@@ -918,11 +874,9 @@ button.refute.press {
     display: block;
     width: auto;
 }
-
 .card:not(:last-child) {
     margin-bottom: 4vmin
 }
-
 .card .suma {
     position: absolute;
     right: 2vmin;
@@ -933,33 +887,27 @@ button.refute.press {
     color: #fff;
     border-radius: 5vmin;
 }
-
 .card .name {
     font-size: 6vmin;
     line-height: 1;
 }
-
 .card .street {
     display: block;
     margin: 1vmin 0;
     font-size: 3vmin;
     color: #575757;
 }
-
 .card .street b {
     font-weight: 700;
 }
-
 .card .date {
 }
-
 .card .group {
     display: table;
     width: 100%;
     box-sizing: border-box;
     margin-top: 3vmin;
 }
-
 .card .group > * {
     margin-right: 2vmin;
     display: inline-block;
@@ -969,11 +917,9 @@ button.refute.press {
 .card[status="missing"] {
     border-color: #FF5722;
 }
-
 .card[status="waiting"] {
     border-color: #FF9800;
 }
-
 .card[status="paid"] {
     border-color: #4CAF50;
 }
@@ -1007,50 +953,45 @@ button.refute.press {
     text-align: right;
     font-weight: 700;
 }
-
 .card-info .name {
     font-size: 7vmin;
     line-height: 1;
-    min-height: 17vmin;
+    min-height: 21vmin;
     display: block;
 }
-
 .card-info .street {
     display: block;
     margin: 1vmin 0;
     font-size: 3.5vmin;
     color: #000000;
 }
-
 .card-info .street b {
     font-weight: 700;
 }
-
 .card-info .group {
     display: table;
     width: 100%;
     box-sizing: border-box;
     margin: 7vmin 0;
 }
-
+.card-info .group[hide="on"]{
+    display: none;
+}
 .card-info .group > * {
     display: table;
     width: 100%;
     box-sizing: border-box;
-    margin: 4vmin 0;
+    margin: 2vmin 0;
 }
-
 .card-info .group > * > * {
     display: inline-block;
     vertical-align: middle;
     width: 50%;
 }
-
 .card-info .group p {
     font-size: 4.5vmin;
     /* padding-left: 5vmin; */
 }
-
 .card-info .group span {
     text-align: right;
     font-size: 5vmin;
@@ -1062,40 +1003,31 @@ button.refute.press {
     padding: 0;
     box-sizing: border-box;
 }
-
 .page-clients .pagination {
     border: none;
 }
-
 .page-clients .pagination-head {
     display: none;
 }
-
 .page-clients .pagination-content {
     margin-top: 0;
     min-height: calc(100vh - 59vmin);
 }
-
 .page-clients .card {
     position: relative;
 }
-
 .page-clients .card:not(:last-child) {
     margin-bottom: 4vmin
 }
-
 .page-clients .card[status="missing"] {
     border-color: #FF5722;
 }
-
 .page-clients .card[status="waiting"] {
     border-color: #FF9800;
 }
-
 .page-clients .card[status="paid"] {
     border-color: #4CAF50;
 }
-
 .page-clients .card .option {
     position: absolute;
     right: 0;
@@ -1104,28 +1036,25 @@ button.refute.press {
 
 .page-info {
 }
-
 .page-info .card-info {
 }
 .page-info .save{
     margin: 0 auto;
     display: table;
 }
+
 .bar-clients {
     width: 70vw;
 }
-
 .bar-clients .add {
 }
-
 .bar-clients .search {
     display: inline-block;
-    width: calc(100% - 12vmin);
+    width: calc(100% - 22vmin);
 }
 
 .client {
 }
-
 .client .form-group:first-child {
     margin-top: 0;
 }
@@ -1133,52 +1062,42 @@ button.refute.press {
 .client .group {
     margin: 2vmin 0;
 }
-
 .client .group .form-group {
 }
-
 .client .group .form-group > * {
     vertical-align: middle;
     display: inline-block;
     width: 50%;
 }
-
 .client .group .form-group > *:nth-child(1) {
     width: calc(50% - 2vmin);
     margin: 0;
     text-align: right;
     margin-right: 2vmin;
 }
-
 .client .group .form-group > *:nth-child(2) {
     width: 50%;
 }
-
 .client .appointed {
     margin: 2vmin 0;
     background-color: rgb(229 212 134 / 34%);
     border-color: #fff284;
 }
-
 .client .appointed .label {
     margin: 0.6vmin 0;
     background: transparent;
 }
-
 .client .appointed input {
     width: 30vmin;
     float: right;
 }
-
 .client .status {
     margin: 2vmin 0;
 }
-
 .client .status .ux-switch {
     margin: 3vmin 0;
     display: table;
 }
-
 .client .save {
     margin-top: 5vmin;
 }
@@ -1193,8 +1112,8 @@ button.refute.press {
     height: calc(100vh - 17vmin);
     z-index: 4;
     line-height: 0;
+    user-select: none;
 }
-
 .page-calculator .result {
     display: block;
     width: 100%;
@@ -1205,7 +1124,6 @@ button.refute.press {
     overflow: auto;
     direction: rtl;
 }
-
 .page-calculator .result .item {
     display: table;
     box-sizing: border-box;
@@ -1219,7 +1137,6 @@ button.refute.press {
     direction: ltr;
     position: relative;
 }
-
 .page-calculator .result .item[minus="on"]:before {
     content: "-";
     position: absolute;
@@ -1227,11 +1144,9 @@ button.refute.press {
     text-align: center;
     width: 5vmin;
 }
-
 .page-calculator .result .item span {
     display: block;
 }
-
 .page-calculator .result .item .del {
     position: absolute;
     top: 0;
@@ -1245,24 +1160,19 @@ button.refute.press {
     background-color: rgb(0 0 0 / 0%);
     color: #cbcbcb;
 }
-
 .page-calculator .result .item[minus="on"] {
     background-color: #ffd4b9;
 }
-
 .page-calculator .result .item.active {
     background-color: #4CAF50;
     color: #fff;
 }
-
 .page-calculator .result .item.active .del {
     display: none;
 }
-
 .page-calculator .result .item[minus="on"] .del {
     color: #ff8f48;
 }
-
 .page-calculator .total {
     position: relative;
     display: table;
@@ -1273,7 +1183,6 @@ button.refute.press {
     border-top: 1px dashed #d8d8d8;
     background-color: #f9f9f9;
 }
-
 .page-calculator .total:before {
     content: attr(count);
     position: absolute;
@@ -1286,20 +1195,17 @@ button.refute.press {
     border-radius: 1vmin;
     background-color: #ededed;
 }
-
 .page-calculator .total > * {
     display: inline-block;
     vertical-align: middle;
     width: 50%;
     box-sizing: border-box;
 }
-
 .page-calculator .total p {
     font-size: 5vmin;
     line-height: 1;
     padding-left: 5vmin;
 }
-
 .page-calculator .total span {
     text-align: right;
     font-size: 6vmin;
@@ -1307,8 +1213,8 @@ button.refute.press {
     line-height: 1;
     /* text-overflow: ellipsis; */
     white-space: nowrap;
+    user-select: all;
 }
-
 .page-calculator .select {
     display: block;
     box-sizing: border-box;
@@ -1318,19 +1224,16 @@ button.refute.press {
     overflow: hidden;
     overflow-x: scroll;
 }
-
 .page-calculator .select section {
     display: table;
     width: max-content;
     text-align: center;
     min-width: 100%;
 }
-
 .page-calculator .select button {
     margin: 0 1vmin;
     /* margin: 0 5vmin; */
 }
-
 .page-calculator .numpad {
     display: table;
     width: 100%;
@@ -1340,12 +1243,10 @@ button.refute.press {
     background: #fff;
     border: 1px solid #f3f3f3;
 }
-
 .page-calculator .numpad > * {
     display: inline-block;
     vertical-align: top;
 }
-
 .page-calculator .numpad a {
     box-sizing: border-box;
     border: 1px solid #f3f3f3;
@@ -1371,7 +1272,6 @@ button.refute.press {
 
 .page-select {
 }
-
 .page-select .result, .page-select .total {
     position: relative;
     display: block;
@@ -1380,13 +1280,11 @@ button.refute.press {
     padding: 4vmin;
     background-color: #f9f9f9;
 }
-
 .page-select .result {
     padding-bottom: 0;
     /* position: sticky; */
     /* top: 0; */
 }
-
 .page-select .result > div {
     position: relative;
     /* top: 0; */
@@ -1398,12 +1296,10 @@ button.refute.press {
     box-sizing: border-box;
     border-bottom: 1px dashed #d8d8d8;
 }
-
 .page-select .result > div:last-child {
     margin-bottom: 0;
     border: none;
 }
-
 .page-select .result > div:before, .page-select .total:before {
     content: attr(count);
     position: absolute;
@@ -1416,7 +1312,6 @@ button.refute.press {
     border-radius: 1vmin;
     background-color: #ededed;
 }
-
 .page-select .result > div > *, .page-select .total > * {
     display: inline-block;
     vertical-align: middle;
@@ -1425,18 +1320,15 @@ button.refute.press {
     line-height: 7vmin;
     font-size: 4vmin;
 }
-
 .page-select .result > div p, .page-select .total p {
     font-size: 5vmin;
     padding-left: 5vmin;
 }
-
 .page-select .result > div span, .page-select .total span {
     text-align: right;
     font-size: 6vmin;
     font-weight: 700;
 }
-
 .page-select .total {
     border: 1px dashed #d8d8d8;
     border-left: 0;
@@ -1444,15 +1336,12 @@ button.refute.press {
     padding-left: 8vmin;
     background-color: rgb(255 255 255);
 }
-
 .page-select .total:before {
     top: calc(50% - 3vmin);
     left: 4vmin;
 }
-
 .page-select .card {
 }
-
 .page-select .card .del {
     position: absolute;
     right: 0;
@@ -1463,10 +1352,8 @@ button.refute.press {
 .bar-select {
     width: 70vw;
 }
-
 .bar-select .select {
 }
-
 .bar-select .search {
     display: inline-block;
     width: calc(100% - 10vmin);
@@ -1476,7 +1363,6 @@ button.refute.press {
     width: 70vw;
     text-align: right;
 }
-
 .find-select .item {
     padding: 1vmin 0;
 }
@@ -1484,7 +1370,6 @@ button.refute.press {
 .page-days {
     width: 80vmin;
 }
-
 .page-days a {
     display: inline-block;
     vertical-align: top;
@@ -1502,32 +1387,28 @@ button.refute.press {
      background: #09415b;
     color: #fff;
 }
+
 .page-home {
     padding: 1px 0 0;
 }
-
 .page-home .card {
 }
-
 .page-home .card .check {
     position: absolute;
     right: 1vmin;
     top: 1vmin;
-    border: 1px dashed #d8d8d8;
+    border: 2px dashed #104c92;
     border-radius: 100%;
     color: transparent;
     font-size: 6vmin;
 }
-
 .page-home .card[status="paid"] .check {
     border-color: #4CAF50;
     color: #4CAF50;
 }
-
 .bar-home > *:not(:last-child) {
     /* margin-right: 2vmin; */
 }
-
 .bar-home .day {
     margin: 1vmin 2vmin;
     width: auto;
@@ -1536,12 +1417,10 @@ button.refute.press {
     height: 8vmin;
     padding: 0 1vmin;
 }
-
 .bar-home .day:before, .bar-home .day:after {
     display: inline-block;
     vertical-align: top;
 }
-
 .bar-home .day:after {
     content: attr(day);
     display: inline-block;
@@ -1556,7 +1435,20 @@ button.refute.press {
     border-radius: 1vmin;
     width: 5vmin;
 }
+
 .page-print{
+	position: fixed;
+	top: 0;
+	left: 0;
+	display: block;
+}
+.page-print button{
+    position: absolute;
+    bottom: 10vmin;
+    left: 50%;
+    transform: translate3d(-50%, 0px, 0px);
+}
+.page-print-block{
 	position: fixed;
 	top: 0;
 	left: 100%;
@@ -1567,8 +1459,49 @@ button.refute.press {
 	background: #fff;
 	width: calc(80vmin * 5);
 	height: calc(108vmin * 2);
+	width: calc(80vmin * 4);
+	height: calc((80vmin * 4) * 1.414);
 }
 .page-print-item > *{
     display: inline-block;
     vertical-align: top;
+}
+
+
+.page-calculator-info{
+	width: 80vw;
+}
+.page-calculator-info .result {
+    
+}
+.page-calculator-info .result > div {
+    position: relative;
+    display: table;
+    width: 100%;
+    padding: 2vmin 0;
+    box-sizing: border-box;
+}
+.page-calculator-info .result  > div > *{
+    display: inline-block;
+    vertical-align: middle;
+    width: 50%;
+    box-sizing: border-box;
+    line-height: 7vmin;
+}
+.page-calculator-info p{
+    font-size: 5vmin;
+}
+.page-calculator-info span{
+    text-align: right;
+    font-size: 6vmin;
+    font-weight: 700;
+}
+.page-calculator-info .total{
+	text-align: center;
+	display: block;
+	padding: 4vmin 0 0;
+	margin: 4vmin 0 0 0;
+	border-top: 2px dashed #09415b;
+	font-size: 8vmin;
+	line-height: 1;
 }
