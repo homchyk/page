@@ -1,8 +1,31 @@
 // --- app
 var app = new Object();
 app.body = document.body;
-app.slected = null;
+app.selected = null;
 app.street = [];
+app.verify = function(data){
+	return verify({
+		"key": "",
+		"name": "",
+		"street": "",
+		"house": "",
+		"number": 0,
+		// ---
+		"pension": 0,
+		"over": 0,
+		"subsidy": 0,
+		"insurance": 0,
+		"privilege": 0,
+		// --- debt
+		"debt-pension": 0,
+		"debt-subsidy": 0,
+		"debt-insurance": 0,
+		"debt-privilege": 0,
+		// ---
+		"appointed": 0,
+		"status": ""
+	},data);
+};
 // --- ініціалізація
 app.init = function(data){
 	app.page.body = app.body;
@@ -10,10 +33,10 @@ app.init = function(data){
 	app.bar = app.bar();
 
 	document.body.appendChild(app.menu);
-
-	app.load("stanislav");
-	//app.load("test");
-
+	
+	memory.load();
+	app.load(memory.get("selected"));
+	
 	app.switch('home');
 	
 	// --- натиск на кнопки
@@ -64,8 +87,9 @@ app.switch = function(name,option){
 app.load = function(name){
 	let k;
 	if(["stanislav","myrolyubovka"].indexOf(name) == -1) return false;
-	app.slected = name;
-	database.load(name);
+	app.selected = name;
+	database.load(app.selected);
+	memory.set(app.selected,"selected");
 	// --- Переключажмо всі данні
 	for(k in app.page.ready){
 		if(typeof app.page.ready[k]["update"] == "function"){
@@ -73,9 +97,32 @@ app.load = function(name){
 		}
 	}
 };
-// --- поділитися файлом (Поки відмовився)
-app.share = function(file){
-		
+// --- поділитися файлом 
+app.share = function(data,title){
+	let obj,check,isFile = data instanceof File;
+	
+	if(typeof title != "string") title = "";
+	if(!navigator.share) return false;
+	
+	obj = new Object();
+
+	if(isFile){
+		obj = {title: data.name,text: data.name,files: [data]}
+	}else if(typeof data == "string" && data.indexOf("http") != -1){
+		obj = {title: title,url: data}
+	}else{
+		obj = {title: title,text: data}
+	}
+
+	try {
+		navigator.share(obj);
+		check = true;
+	} catch (err) {
+		check = false;
+		console.error('Помилка:', err);
+	}
+	
+	return check;
 };
 // --- Меню
 app.menu = function(){
@@ -117,11 +164,11 @@ app.menu = function(){
 				})
 			}),
 			3: create("line"),
-			4: create("a",(app.slected=="stanislav"?"active":""),{"press":"on"},[create("font","fa-database"),create("p",0,0,app.lang("Станіслав"))],function(){
+			4: create("a",(app.selected=="stanislav"?"active":""),{"press":"on"},[create("font","fa-database"),create("p",0,0,app.lang("Станіслав"))],function(){
 				app.load("stanislav");
 				view.close();
 			}),
-			5: create("a",(app.slected=="myrolyubovka"?"active":""),{"press":"on"},[create("font","fa-database"),create("p",0,0,app.lang("Миролюбівка"))],function(){
+			5: create("a",(app.selected=="myrolyubovka"?"active":""),{"press":"on"},[create("font","fa-database"),create("p",0,0,app.lang("Миролюбівка"))],function(){
 				app.load("myrolyubovka");
 				view.close();
 			}),
@@ -528,35 +575,26 @@ app.card = function(data,type){
 		let i,group,total;
 		total = 0;
 
-		data = verify({
-			"key": "",
-			"name": "",
-			"street": "",
-			"house": "",
-			"number": 0,
-			// ---
-			"pension": 0,
-			"over": 0,
-			"subsidy": 0,
-			"insurance": 0,
-			// ---
-			"appointed": 0,
-			"status": ""
-		},typeof data != "undefined" ? data : this.data);
+		data = app.verify(typeof data != "undefined" ? data : this.data);
 		
 		this.data = data;
 		
 		group = document.createDocumentFragment();
-		["pension","over","subsidy","insurance"].forEach(function(k){
+		["pension","over","subsidy","insurance","privilege"].forEach(function(k){
 			if(data[k] > 0){
 				total += data[k];
 				group.appendChild(create("span","plug",{"type":k},round(data[k],2)));
 			}
 		});
+		["debt-pension","debt-subsidy","debt-insurance","debt-privilege"].forEach(function(k){
+			if(data[k] > 0){
+				total += data[k];
+				group.appendChild(create("span","plug",{"type":k,"debt":"on"},round(data[k],2)));
+			}
+		});
 
 		this.setAttribute("status",data.status);
-		
-		
+
 		this.children[0].innerHTML = data.street+" <b>"+data.house+"</b>",
 		this.children[1].innerText = data.name,
 		
@@ -572,39 +610,42 @@ app.card = function(data,type){
 	return item;
 };
 app.card.info = function(data){
-	let total = 0;
+	let key,debt,total = 0;
 	
-	data = verify({
-		"name": "",
-		"street": "",
-		"house": "",
-		// ---
-		"pension": 0,
-		"over": 0,
-		"subsidy": 0,
-		"insurance": 0,
-	},typeof data != "undefined" ? data : this.data);
-
-	["pension","over","subsidy","insurance"].forEach(function(k){
+	data = app.verify(data);
+	debt = [create("p","label",0,app.lang("debt"))];
+	
+	["pension","over","subsidy","insurance","privilege"].forEach(function(k){
+		key = k;
 		if(typeof data[k] == "number" && isNaN(data[k]) == false) total += data[k];
+		// --- debt
+		k = "debt-"+k;
+		if(typeof data[k] == "number" && isNaN(data[k]) == false && data[k] > 0){
+			total += data[k];
+			debt.push(create("div",0,0,[create("p",0,0,app.lang(key)),create("span",0,0,NumberToText(data[k])+" ₴")]));
+		}
 	});
 
 	data.pension = NumberToText(data.pension)+" ₴";
 	data.over = NumberToText(data.over)+" ₴";
 	data.subsidy = NumberToText(data.subsidy)+" ₴";
 	data.insurance = NumberToText(data.insurance)+" ₴";
-	data.total = NumberToText(round(total,2))+" ₴";
+	data.privilege = NumberToText(data.privilege)+" ₴";
 
+	data.total = NumberToText(round(total,2))+" ₴";
+	
 	return create("div","card-info",0,create("section",0,0,{
 		0: create("span","street",0,data.street+" <b>"+data.house+"</b>"),
 		1: create("span","name",0,data.name),
 		2: create("div","group",0,{
-			0: create("div",0,0,[create("p",0,0,app.lang("Пенсія")),create("span",0,0,data.pension)]),
-			1: create("div",0,0,[create("p",0,0,app.lang("Доплата")),create("span",0,0,data.over)]),
-			2: create("div",0,0,[create("p",0,0,app.lang("Субсидія")),create("span",0,0,data.subsidy)]),
-			3: create("div",0,0,[create("p",0,0,app.lang("Страхове")),create("span",0,0,data.insurance)]),
+			0: create("div",0,0,[create("p",0,0,app.lang("pension")),create("span",0,0,data.pension)]),
+			1: create("div",0,0,[create("p",0,0,app.lang("privilege")),create("span",0,0,data.privilege)]),
+			2: create("div",0,0,[create("p",0,0,app.lang("over")),create("span",0,0,data.over)]),
+			3: create("div",0,0,[create("p",0,0,app.lang("subsidy")),create("span",0,0,data.subsidy)]),
+			4: create("div",0,0,[create("p",0,0,app.lang("insurance")),create("span",0,0,data.insurance)]),
 		}),
-		3: create("span","total",0,data.total),		
+		3: create("div","group",{"hide":(app.selected == "stanislav"?"no":"on")},debt),
+		4: create("span","total",0,data.total),		
 	}));
 };
 // --- очистка
@@ -616,6 +657,11 @@ app.clear = function(){
 		database.table["client"][k]["over"] = 0;
 		database.table["client"][k]["subsidy"] = 0;
 		database.table["client"][k]["insurance"] = 0;
+		database.table["client"][k]["privilege"] = 0;
+		database.table["client"][k]["debt-pension"] = 0;
+		database.table["client"][k]["debt-subsidy"] = 0;
+		database.table["client"][k]["debt-insurance"] = 0;
+		database.table["client"][k]["debt-privilege"] = 0;
 	}
 	database.save();
 };
@@ -707,7 +753,7 @@ app.page.home = function(){
 			"number": this.day
 		};
 		
-		if(app.slected == "stanislav"){
+		if(app.selected == "stanislav"){
 			where = {
 				"appointed": this.day
 			};
@@ -742,7 +788,10 @@ app.page.clients = function(){
 				this.closest(".ux-modal").close();
 			});
 		}),
-		1: create("form","search",0,{
+		1: create("a","btn print fa-print",0,"",function(){
+			sample.print();
+		}),
+		2: create("form","search",0,{
 			0: create("input",0,{"type":"text","name":"text","placeholder":app.lang("Пошук")},""),
 			1: create("a","btn fa-search",0,"",function(){
 				sample.table.search(this.parentNode.elements.text.value);
@@ -754,6 +803,8 @@ app.page.clients = function(){
 			},
 			"oninput": function(){
 				sample.table.search(this.elements.text.value);
+				// --- Повераємо сторінку до верху
+				document.documentElement.scrollTop = 0;
 			}
 		}),
 	});
@@ -762,6 +813,15 @@ app.page.clients = function(){
 		view: 15,
 		style: "castom"
 	});
+	sample.print = function(){
+		let k,list = [];
+		data = database.select({},"client");
+		for(k in data){
+			list.push(data[k]["key"]);
+			
+		}
+		app.page.print(list);
+	};
 	sample.item = function(data){
 		let item = app.card(data);
 		
@@ -845,18 +905,32 @@ app.page.calculator = function(){
 		1: create("span")
 	});
 	sample.select = create("div","select",0,create("section",0,0,{
-		0: create("button",0,0,app.lang("Пенсія"),function(){sample.switch("pension")}),
-		1: create("button",0,0,app.lang("Доплата"),function(){sample.switch("over")}),
-		2: create("button",0,0,app.lang("Субсидія"),function(){sample.switch("subsidy")}),
-		3: create("button",0,0,app.lang("Страхове"),function(){sample.switch("insurance")}),
-		4: create("button",0,0,app.lang("Товар"),function(){sample.switch("tovar")}),
-		5: create("button",0,0,app.lang("Інше"),function(){sample.switch("other")})
+		1: create("button","general fa-info",0,"",function(){sample.info()}),
+		2: create("button",0,0,app.lang("pension"),function(){sample.switch("pension")}),
+		3: create("button",0,0,app.lang("privilege"),function(){sample.switch("privilege")}),
+		4: create("button",0,0,app.lang("over"),function(){sample.switch("over")}),
+		5: create("button",0,0,app.lang("subsidy"),function(){sample.switch("subsidy")}),
+		6: create("button",0,0,app.lang("insurance"),function(){sample.switch("insurance")}),
+		7: create("button",0,0,app.lang("tovar"),function(){sample.switch("tovar")}),
+		8: create("button",0,0,app.lang("other"),function(){sample.switch("other")}),
 	}));
 	sample.numpad = create("div","numpad",0,[
 		create("a",0,{"press":"on"},"7"),
 		create("a",0,{"press":"on"},"8"),
 		create("a",0,{"press":"on"},"9"),
-		create("a",0,{"press":"on"},"c"),
+		create("a",0,{"press":"on"},"c",{
+			"ontouchstart": function(){
+				this.long = setTimeout(function(){
+					alert("info",app.lang("Очистити"),function(){
+						sample.data[sample.key] = new Object();
+						sample.switch(sample.key);
+					},function(){})
+				},500);
+			},
+			"ontouchend": function(){
+				clearTimeout(this.long);
+			},
+		}),
 		create("a",0,{"press":"on"},"4"),
 		create("a",0,{"press":"on"},"5"),
 		create("a",0,{"press":"on"},"6"),
@@ -876,6 +950,7 @@ app.page.calculator = function(){
 		"pension": {},
 		"over": {},
 		"subsidy": {},
+		"privilege": {},
 		"insurance": {},
 		"tovar": {},
 		"other": {},
@@ -885,23 +960,27 @@ app.page.calculator = function(){
 	sample.calc = function(){
 		let k,val,total = 0,count = 0;
 		for(k in this.data[this.key]){
-			val = this.data[this.key][k]+"";
-			val = val.replace(",",".");
-			val = parseFloat(val);
-			if(isNaN(val)) val = 0;
+			val = toFloat(this.data[this.key][k])
 			total += val;
 			count++;
 		}
 		// ---
 		this.total.setAttribute("count",count);
 		this.total.children[1].innerText = NumberToText(round(total,2))+" ₴";
+		// --- Запоминаємо глобально результат
+		memory.set(Object.assign({},this.data),"calculator",app.selected);
 	};
 	sample.scroll = function(){
 		this.result.scrollTop = this.result.scrollHeight;
 	}
 	sample.action = function(code){
 		let type,item,numb = parseInt(code);
-
+		
+		// --- 
+		if(navigator.vibrate) {
+		    navigator.vibrate(200);
+		}
+		
 		item = this.current;
 		
 		if(!isNaN(numb)){
@@ -957,6 +1036,14 @@ app.page.calculator = function(){
 			1: create("a","del fa-remove",0,"",function(){
 				item.delete();
 			})
+		},function(e){
+			if(e.target.localName == "a") return;
+			
+			if(sample.current instanceof Node){
+				sample.current.classList.remove("active");
+			}
+			sample.current = this;
+			sample.current.classList.add("active");
 		});
 		item.key = key;
 		item.minus = minus;
@@ -991,13 +1078,9 @@ app.page.calculator = function(){
 	};
 	sample.switch = function(key){
 		let k,total = 0,label = "";
+		
+		label = app.lang(key);
 
-		if(key == "pension") label = app.lang("Пенсія");
-		else if(key == "over") label = app.lang("Доплата");
-		else if(key == "subsidy") label = app.lang("Субсидія");
-		else if(key == "insurance") label = app.lang("Страхове");
-		else if(key == "tovar") label = app.lang("Товар");
-		else if(key == "other") label = app.lang("Інше");
 		// ---
 		this.result.innerHTML = "";
 		for(k in this.data[key]){
@@ -1007,6 +1090,10 @@ app.page.calculator = function(){
 		// --- 
 		this.key = key;
 		this.current = this.result.querySelector(".item:last-child");
+		if(this.current instanceof Node){
+			this.current.classList.remove("active");
+		}
+
 		this.total.children[0].innerText = label;
 		
 		this.calc();
@@ -1018,9 +1105,40 @@ app.page.calculator = function(){
 		}
 	};
 	sample.update = function(){
+		let k,data;
 		this.clear();
+
+		data = memory.get("calculator",app.selected);
+		if(data != null){
+			for(k in this.data){
+				if(typeof data[k] != "undefined" && data[k] instanceof Object){
+					this.data[k] = data[k];
+				}
+			}
+		}
+
 		this.switch("pension");
-		this.result.innerHTML = "";
+	};
+	sample.info = function(){
+		let k,key,item,list,val,total = 0;
+		
+		list = [];
+		for(key in this.data){
+			val = 0;
+			for(k in this.data[key]){
+				val += toFloat(this.data[key][k]);
+			}
+			total += val;
+			// ---
+			val = NumberToText(round(val,2))+" ₴";
+			list.push(create("div",0,{"name":key},"<p>"+app.lang(key)+"</p><span>"+val+"</span>"));
+		}
+
+		total = NumberToText(round(total,2))+" ₴";
+		ux.modal({"content":create("div","page-calculator-info",0,{
+			0: create("div","result",0,list),
+			1: create("span","total",0,total)
+		}),"theme":"modal-auto"}).open();
 	};
 	
 	create(sample,0,0,{
@@ -1041,10 +1159,11 @@ app.page.select = function(){
 	sample.total =  create("div","total",0,[create("p",0,0,app.lang("Загально")),create("span")]),
 	sample.body = create("section","");
 	sample.result = create("div","result",0,{
-		0: create("div",0,{"name":"pension"},[create("p",0,0,app.lang("Пенсія")),create("span")]),
-		1: create("div",0,{"name":"over"},[create("p",0,0,app.lang("Доплата")),create("span")]),
-		2: create("div",0,{"name":"subsidy"},[create("p",0,0,app.lang("Субсидія")),create("span")]),
-		3: create("div",0,{"name":"insurance"},[create("p",0,0,app.lang("Страхове")),create("span")]),
+		0: create("div",0,{"name":"pension"},[create("p",0,0,app.lang("pension")),create("span")]),
+		1: create("div",0,{"name":"privilege"},[create("p",0,0,app.lang("privilege")),create("span")]),
+		2: create("div",0,{"name":"over"},[create("p",0,0,app.lang("over")),create("span")]),
+		3: create("div",0,{"name":"subsidy"},[create("p",0,0,app.lang("subsidy")),create("span")]),
+		4: create("div",0,{"name":"insurance"},[create("p",0,0,app.lang("insurance")),create("span")]),
 	});
 	sample.bar = create("div","bar-select",0,{
 		0: create("a","btn clear fa-trash",0,"",function(){
@@ -1066,6 +1185,7 @@ app.page.select = function(){
 	sample.list = [];
 	sample.data = {
 		"pension": 0,
+		"privilege": 0,
 		"over": 0,
 		"subsidy": 0,
 		"insurance": 0,
@@ -1081,9 +1201,9 @@ app.page.select = function(){
 		return item;
 	};
 	sample.calc = function(){
-		let item,i,val,total,data,count = new Object();
+		let item,i,val,debt,total,data,count = new Object();
 		
-		["pension","over","subsidy","insurance","total"].forEach(function(k){
+		["pension","privilege","over","subsidy","insurance","total"].forEach(function(k){
 			count[k] = 0;
 			sample.data[k] = 0;
 		});
@@ -1095,11 +1215,21 @@ app.page.select = function(){
 			val = 0;
 			total = 0;
 			
-			["pension","over","subsidy","insurance"].forEach(function(k){
+			["pension","privilege","over","subsidy","insurance"].forEach(function(k){
 				val = data[k]+"";
 				val = val.replace(",",".");
 				val = parseFloat(val);
 				if(isNaN(val)) val = 0;
+				// --- debt
+				debt = data["debt-"+k];
+				if(typeof debt != "undefined"){
+					debt = debt+"";
+					debt = debt.replace(",",".");
+					debt = parseFloat(debt);
+					if(isNaN(debt)) debt = 0;
+					// ---
+					val += debt;					
+				}
 				// ---
 				total += val;
 				sample.data[k] += val;
@@ -1110,7 +1240,7 @@ app.page.select = function(){
 			sample.data["total"] += total;
 		}
 		
-		["pension","over","subsidy","insurance"].forEach(function(k){
+		["pension","privilege","over","subsidy","insurance"].forEach(function(k){
 			item = sample.result.querySelector('[name="'+k+'"]');
 			if(item instanceof Node){
 				item.setAttribute("count",count[k]);
@@ -1207,24 +1337,9 @@ app.page.info = function(data){
 		saveAs(blob, name+".png");
 	};
 	sample.share = function(blob){
-		let check = true;
-		if(!navigator.share) check = false; 
-		
-		let file = new File([blob], name+".png", {type: 'image/png'});
-		
-		if(check == true && (navigator.canShare && navigator.canShare({files:[file]}))){
-			try {
-				navigator.share({
-					title: app.lang("Поділитися інформацією про")+" "+name,
-					text: app.lang("Файл")+" "+name+".png",
-					files: [file],
-				});
-			} catch (err) {
-				check = false;
-				console.error('Помилка поділу:', err);
-			}
+		if(app.share(new File([blob], name+".png", {type: 'image/png'})) == false){
+			this.save(blob);
 		}
-		if(check == false) return this.save(blob);
 	}
 	
 	ux.modal({"content":sample,"theme":"modal-auto"}).open();
@@ -1238,32 +1353,45 @@ app.page.print = function(list){
 		return;
 	}
 	
-	name = 'Карточки.pdf';
+	name = app.lang('Карточки');
 	
-	sample = create("div","page-print");
+	sample = create("div","page-print preloader",0,'<div><i class="fa-spin fa-spinner"></i></div>');
+	sample.btn = create("button",0,0,app.lang("Поділития"),function(){
+		sample.share();
+		sample.close();
+	});
+	sample.block = create("div","page-print-block");
 	sample.count = 0;
-	sample.preloader = create("div","preloader open",0,'<div><i class="fa-spin fa-spinner"></i></div>');
 	sample.paint = function(list){
-		let i,max,data,parent;
-		max = 10;
+		let i,data,item,parent,check;
 		parent = null;
 		for(i = 0; i < list.length; i++){
-			if(parent == null || parent.children.length >= max){
-				parent = create("div","page-print-item");
-				this.appendChild(parent);
-			}
 			data = database.get(list[i],"client");
 			if(typeof data == "undefined") continue;
-			parent.appendChild(app.card.info(data));
+			item = app.card.info(data);
+			
+			check = true;
+			if(parent instanceof Node){
+				parent.appendChild(item);
+				check = !(parent.scrollHeight > parent.offsetHeight);
+			}
+
+			if(parent == null || check == false){
+				parent = create("div","page-print-item");
+				this.block.appendChild(parent);
+			}
+			parent.appendChild(item);
 		}
-		
-		document.body.appendChild(this);
-		document.body.appendChild(this.preloader);
-		
-		this.compile();
+		// ---
+		this.count = this.block.children.length;
+		for(i = 0; i < this.block.children.length; i++){
+			html2canvas(this.block.children[i]).then(function(canvas){
+				sample.page(canvas.toDataURL("image/png"));
+			});
+		}
 	};
 	sample.pdf = new window.jspdf.jsPDF({
-		 orientation: 'landscape',
+		 orientation: 'portrait',
 		 unit: 'mm',
 		 format: 'a4',
 		 compress: true
@@ -1273,90 +1401,47 @@ app.page.print = function(list){
 		this.count--;
 		
 		size = this.pdf.internal.pageSize.getWidth();
-		this.pdf.addImage(img, 'png', 0, 0, size, size * 0.54,undefined,'FAST');
+		this.pdf.addImage(img, 'png', 0, 0, size, size * 1.414,undefined,'FAST');
 		
-		if(this.count == 0){
-			this.share(this.pdf.output("blob"));
-		}else{
+		if(this.count > 0){
 			this.pdf.addPage();
+			return;
 		}
+
+		this.appendChild(this.btn);
 	};
-	sample.compile = function(){
-		let i,pdf;
-		
-		pdf = new window.jspdf.jsPDF('landscape');
-		this.count = this.children.length;
-		for(i = 0; i < this.children.length; i++){
-			html2canvas(this.children[i]).then(function(canvas){
-				
-				sample.page(canvas.toDataURL("image/png"));
-/*
-html2canvas($0).then(function(canvas){
-
-	canvas.toBlob(function(blob){
-		saveAs(blob, "Сторінка.png");
-	},'image/png');
-
-});
-*/
-			});
-		}
-	}
-	
 	sample.save = function(){
 		this.pdf.save(name,{ compression: 'FAST' });
 	};
-	sample.share = function(blob){
-		let check = true;
-		if(!navigator.share) check = false; 
-		
-		let file = new File([blob], name+".pdf", {type: 'application/pdf'});
-		
-		if(check == true && (navigator.canShare && navigator.canShare({files:[file]}))){
-			try {
-				navigator.share({
-					title: app.lang("Карточки з інформацією"),
-					text: app.lang("Файл")+" "+name+".pdf",
-					files: [file],
-				});
-			} catch (err) {
-				check = false;
-				console.error('Помилка поділу:', err);
-			}
+	sample.share = function(){
+		if(app.share(new File([this.pdf.output("blob")],name+".pdf",{type:'application/pdf'})) == false){
+			this.save();
 		}
-		
-		if(check == false){
-			this.save(blob);
-		}
+	}
+	sample.open = function(){
+		document.body.appendChild(this);
+		document.body.appendChild(this.block);
+	};
+	sample.close = function(){
 		// --- Видалення
 		if(this.parentNode != null){
 			this.parentNode.removeChild(this);
 		}
-		if(this.preloader.parentNode != null){
-			this.preloader.parentNode.removeChild(this.preloader);
+		if(this.block.parentNode != null){
+			this.block.parentNode.removeChild(this.block);
 		}
-	}
-
-	sample.paint(list);
+	};
+	
+	sample.open();
+	
+	setTimeout(function(){
+		sample.paint(list);
+	},300);
 };
 app.page.client = function(data,handler){
 	let sample,street,i,add = data instanceof Object == false;
 	
-	data = verify({
-		"key": "",
-		"name": "",
-		"street": "",
-		"house": "",
-		"number": 0,
-		// ---
-		"pension": 0,
-		"over": 0,
-		"subsidy": 0,
-		"insurance": 0,
-		// ---
-		"appointed": 0,
-		"status": ""
-	},data);
+	data = app.verify(data);
 	
 	street = new Object();
 	for(i = 0; i < app.street.length; i++){
@@ -1366,7 +1451,8 @@ app.page.client = function(data,handler){
 	if(add == true){
 		data.key = database.key("client");
 	}
-
+	
+	
 	sample = create("form","client",0,{
 		0: create("input",0,{"type":"hidden","name":"key"}),
 		1: create("div","form-group",0,{
@@ -1395,19 +1481,42 @@ app.page.client = function(data,handler){
 				1: create("input",0,{"type":"number","name":"over","step":0.01})
 			}),
 			2: create("div","form-group",0,{
+				0: create("p","label",0,app.lang("Пільга")),
+				1: create("input",0,{"type":"number","name":"privilege","step":0.01})
+			}),
+			3: create("div","form-group",0,{
 				0: create("p","label",0,app.lang("Субсидія")),
 				1: create("input",0,{"type":"number","name":"subsidy","step":0.01})
 			}),
-			3: create("div","form-group",0,{
+			4: create("div","form-group",0,{
 				0: create("p","label",0,app.lang("Страхова")),
 				1: create("input",0,{"type":"number","name":"insurance","step":0.01})
 			})
 		}),
-		6: create("div","appointed panel",0,{
+		6: create("div","group panel",{"hide":(app.selected == "stanislav"?"no":"on")},{
+			0: create("p","label",0,app.lang("Заборгованість")),
+			1: create("div","form-group",0,{
+				0: create("p","label",0,app.lang("Пенсія")),
+				1: create("input",0,{"type":"number","name":"debt-pension","step":0.01})
+			}),
+			2: create("div","form-group",0,{
+				0: create("p","label",0,app.lang("Пільга")),
+				1: create("input",0,{"type":"number","name":"debt-privilege","step":0.01})
+			}),
+			3: create("div","form-group",0,{
+				0: create("p","label",0,app.lang("Субсидія")),
+				1: create("input",0,{"type":"number","name":"debt-subsidy","step":0.01})
+			}),
+			4: create("div","form-group",0,{
+				0: create("p","label",0,app.lang("Страхова")),
+				1: create("input",0,{"type":"number","name":"debt-insurance","step":0.01})
+			})
+		}),
+		7: create("div","appointed panel",0,{
 			0: create("p","label",0,app.lang("На який день призначено")),
 			1: create("input",0,{"type":"number","name":"appointed"})
 		}),
-		7: create("div","status panel",0,{
+		8: create("div","status panel",0,{
 			0: create("p","label",0,app.lang("Статус")),
 			1: ux.switch({"type":"radio","value":"","name":"status","label":app.lang("Інше")}),
 			2: ux.switch({"type":"radio","value":"missing","name":"status","label":app.lang("Відсутній")}),
@@ -1429,7 +1538,7 @@ app.page.client = function(data,handler){
 		
 		delete(data[""]);
 		
-		["pension","over","subsidy","insurance","appointed","number","house"].forEach(function(k){
+		["pension","over","subsidy","insurance","privilege","debt-pension","debt-subsidy","debt-insurance","debt-privilege","appointed","number","house"].forEach(function(k){
 			data[k] = parseFloat(data[k]);
 		});
 
