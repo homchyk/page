@@ -65,6 +65,13 @@ var NumberToText = function(value){
 	
 	return value.join(",");
 };
+var toFloat = function(val){
+	val = val+"";
+	val = val.replace(",",".");
+	val = parseFloat(val);
+	if(isNaN(val)) val = 0;
+	return val;
+}
 var overflow = function(clear){
 	let html,width;
 	html = window.document.documentElement;
@@ -311,3 +318,44 @@ database.export = function(){
 	let data = JSON.stringify(this.table);
 	saveAs(new Blob([data],{type: "application/json;charset=utf-8"}), this.name+".json");
 };
+
+var memory = new Object();
+memory.data = {
+	"selected": "stanislav",
+	"calculator": null
+};
+memory.save = function(){
+	localStorage.setItem("memory", JSON.stringify(this.data));
+	return true;
+};
+memory.load = function(){
+	let data = localStorage.getItem("memory");
+	if(data != null) data = JSON.parse(data);
+	if(data instanceof Object){
+		this.data = verify(this.data,data);
+	}
+};
+memory.get = function(key,subkey){
+	let data = this.data[key];
+	if(typeof subkey != "undefined" && data instanceof Object){
+		data = data[subkey];
+	}
+	return typeof data != "undefined" ? data : null;
+};
+memory.set = function(data,key,subkey){
+	if(typeof key == "undefined") return false;
+	if(typeof subkey != "undefined"){
+		if(this.data[key] instanceof Object == false){
+			this.data[key] = new Object();
+		}
+		this.data[key][subkey] = data;
+	}else{
+		this.data[key] = data;
+	}
+};
+
+// ---
+window.addEventListener('pagehide', function(){
+	// --- в памяті
+	memory.save();
+});
