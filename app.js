@@ -802,9 +802,9 @@ app.page.clients = function(){
 				sample.table.search(this.elements.text.value);
 			},
 			"oninput": function(){
+				document.documentElement.scrollTop = 0;
 				sample.table.search(this.elements.text.value);
 				// --- Повераємо сторінку до верху
-				document.documentElement.scrollTop = 0;
 			}
 		}),
 	});
