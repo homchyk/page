@@ -156,7 +156,7 @@ app.menu = function(){
 				view.close();
 			}),
 			2: create("a","",{"press":"on"},[create("font","fa-trash-o"),create("p",0,0,app.lang("Очистити"))],function(){
-				alert("info",app.lang("Очищення"),app.lang("- Назначений день, <br>- Статус, <br>- Доплата, <br>- Субсидія, <br>- Страхове"),function(){
+				alert("info",app.lang("Очищення"),app.lang("- Назначений день, <br>- Статус"),function(){
 					app.clear();
 					view.close();
 				},function(){
@@ -610,7 +610,7 @@ app.card = function(data,type){
 	return item;
 };
 app.card.info = function(data){
-	let key,debt,total = 0;
+	let hide,key,debt,total = 0;
 	
 	data = app.verify(data);
 	debt = [create("p","label",0,app.lang("debt"))];
@@ -634,6 +634,8 @@ app.card.info = function(data){
 
 	data.total = NumberToText(round(total,2))+" ₴";
 	
+	hide = debt.length == 0;
+	
 	return create("div","card-info",0,create("section",0,0,{
 		0: create("span","street",0,data.street+" <b>"+data.house+"</b>"),
 		1: create("span","name",0,data.name),
@@ -644,7 +646,7 @@ app.card.info = function(data){
 			3: create("div",0,0,[create("p",0,0,app.lang("subsidy")),create("span",0,0,data.subsidy)]),
 			4: create("div",0,0,[create("p",0,0,app.lang("insurance")),create("span",0,0,data.insurance)]),
 		}),
-		3: create("div","group",{"hide":(app.selected == "stanislav"?"no":"on")},debt),
+		3: create("div","group",{"hide":(hide?"no":"on")},debt),
 		4: create("span","total",0,data.total),		
 	}));
 };
@@ -654,10 +656,6 @@ app.clear = function(){
 	for(k in database.table["client"]){
 		database.table["client"][k]["status"] = "";
 		database.table["client"][k]["appointed"] = 0;
-		database.table["client"][k]["over"] = 0;
-		database.table["client"][k]["subsidy"] = 0;
-		database.table["client"][k]["insurance"] = 0;
-		database.table["client"][k]["privilege"] = 0;
 		database.table["client"][k]["debt-pension"] = 0;
 		database.table["client"][k]["debt-subsidy"] = 0;
 		database.table["client"][k]["debt-insurance"] = 0;
@@ -702,8 +700,23 @@ app.page.home = function(){
 		2: create("a","btn print fa-print",0,"",function(){
 			sample.print();
 		}),
-		3: create("a","btn select fa-pie-chart",0,"",function(){
-			sample.select();
+		3: create("a","btn select fa-pie-chart",0,"",{
+			"ontouchstart": function(){
+				let btn = this;
+				btn.select = "paid";
+				this.long = setTimeout(function(){
+					btn.select = true;
+					if(navigator.vibrate){
+					    navigator.vibrate(100);
+					}
+				},500);
+			},
+			"ontouchend": function(){
+				clearTimeout(this.long);
+			},
+			"onclick": function(){
+				sample.select(this.select);
+			}
 		})
 	});
 	sample.day = day;
@@ -737,10 +750,12 @@ app.page.home = function(){
 		});
 		app.page.print(list);
 	};
-	sample.select = function(){
+	sample.select = function(status){
 		let list = [];
 		[].forEach.call(this.querySelectorAll(".card"),function(a){
-			list.push(a.data.key);
+			if(status == true || a.data.status == status){
+				list.push(a.data.key);
+			}
 		});
 		app.switch("select",list);
 	};
@@ -802,9 +817,15 @@ app.page.clients = function(){
 				sample.table.search(this.elements.text.value);
 			},
 			"oninput": function(){
-				document.documentElement.scrollTop = 0;
 				sample.table.search(this.elements.text.value);
-				// --- Повераємо сторінку до верху
+				// ---
+				if(typeof this.timeout != "undefined"){
+					clearTimeout(this.timeout);
+				}
+				this.timeout = setTimeout(function(){
+					// --- Повераємо сторінку до верху
+					document.documentElement.scrollTop = 0;
+				},100);
 			}
 		}),
 	});
@@ -977,9 +998,11 @@ app.page.calculator = function(){
 		let type,item,numb = parseInt(code);
 		
 		// --- 
+		/*
 		if(navigator.vibrate) {
-		    //navigator.vibrate(50);
+		    navigator.vibrate(50);
 		}
+		*/
 		
 		item = this.current;
 		
@@ -1451,8 +1474,7 @@ app.page.client = function(data,handler){
 	if(add == true){
 		data.key = database.key("client");
 	}
-	
-	
+
 	sample = create("form","client",0,{
 		0: create("input",0,{"type":"hidden","name":"key"}),
 		1: create("div","form-group",0,{
@@ -1493,7 +1515,7 @@ app.page.client = function(data,handler){
 				1: create("input",0,{"type":"number","name":"insurance","step":0.01})
 			})
 		}),
-		6: create("div","group panel",{"hide":(app.selected == "stanislav"?"no":"on")},{
+		6: create("div","group panel",0,{
 			0: create("p","label",0,app.lang("Заборгованість")),
 			1: create("div","form-group",0,{
 				0: create("p","label",0,app.lang("Пенсія")),
