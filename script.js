@@ -356,6 +356,10 @@ memory.set = function(data,key,subkey){
 
 // ---
 window.addEventListener('pagehide', function(){
-	// --- в памяті
 	memory.save();
+});
+document.addEventListener("visibilitychange", function(){
+	if(document.visibilityState === "hidden"){
+		memory.save();
+	} 
 });
