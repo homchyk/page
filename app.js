@@ -978,7 +978,7 @@ app.page.calculator = function(){
 		
 		// --- 
 		if(navigator.vibrate) {
-		    navigator.vibrate(200);
+		    //navigator.vibrate(50);
 		}
 		
 		item = this.current;
