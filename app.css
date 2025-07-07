@@ -724,6 +724,7 @@ button.refute.press {
     border: none;
     background: transparent;
     padding: 0;
+    padding-right: 2vmin;
     margin: 0;
     text-align: right;
 }
@@ -1050,7 +1051,7 @@ button.refute.press {
 }
 .bar-clients .search {
     display: inline-block;
-    width: calc(100% - 22vmin);
+    width: calc(100% - 20vmin);
 }
 
 .client {
