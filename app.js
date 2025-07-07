@@ -713,9 +713,10 @@ app.page.home = function(){
 			},
 			"ontouchend": function(){
 				clearTimeout(this.long);
+				sample.select(this.select);
 			},
 			"onclick": function(){
-				sample.select(this.select);
+				//sample.select(this.select);
 			}
 		})
 	});
@@ -832,7 +833,8 @@ app.page.clients = function(){
 	sample.table = new pagination(create("div",""),{
 		search : false,
 		view: 15,
-		style: "castom"
+		style: "castom",
+		btn: 5
 	});
 	sample.print = function(){
 		let k,list = [];
