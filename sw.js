@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cache-v1.5.5';
+const CACHE_NAME = 'cache-v1.5.7';
 
 // Список файлів, які треба закешувати при встановленні
 const FILES_TO_CACHE = [
