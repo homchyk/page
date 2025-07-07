@@ -647,7 +647,7 @@ app.card.info = function(data){
 			3: create("div",0,0,[create("p",0,0,app.lang("subsidy")),create("span",0,0,data.subsidy)]),
 			4: create("div",0,0,[create("p",0,0,app.lang("insurance")),create("span",0,0,data.insurance)]),
 		}),
-		3: create("div","group",{"hide":(hide?"no":"on")},debt),
+		3: create("div","group",{"hide":(hide?"on":"no")},debt),
 		4: create("span","total",0,data.total),		
 	}));
 };
