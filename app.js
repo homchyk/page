@@ -635,7 +635,7 @@ app.card.info = function(data){
 
 	data.total = NumberToText(round(total,2))+" ₴";
 	
-	hide = debt.length == 0;
+	hide = debt.length > 1;
 	
 	return create("div","card-info",0,create("section",0,0,{
 		0: create("span","street",0,data.street+" <b>"+data.house+"</b>"),
