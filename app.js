@@ -487,6 +487,7 @@ app.ux.search = function(option){
 		this.handler(this.elements.text.value);
 	};
 	sample.clear = function(){
+		this.elements.text.focus();
 		this.elements.text.value = "";
 		this.children[1].className = "btn fa-search";
 	};
@@ -807,28 +808,17 @@ app.page.clients = function(){
 		1: create("a","btn print fa-print",0,"",function(){
 			sample.print();
 		}),
-		2: create("form","search",0,{
-			0: create("input",0,{"type":"text","name":"text","placeholder":app.lang("Пошук")},""),
-			1: create("a","btn fa-search",0,"",function(){
-				sample.table.search(this.parentNode.elements.text.value);
-			}),
-		},{
-			"onsubmit": function(e){
-				e.preventDefault();
-				sample.table.search(this.elements.text.value);
-			},
-			"oninput": function(){
-				sample.table.search(this.elements.text.value);
-				// ---
-				if(typeof this.timeout != "undefined"){
-					clearTimeout(this.timeout);
-				}
-				this.timeout = setTimeout(function(){
-					// --- Повераємо сторінку до верху
-					document.documentElement.scrollTop = 0;
-				},100);
-			}
-		}),
+	});
+	sample.search = app.ux.search({
+		"handler": function(value){
+			if(typeof this.timeout != "undefined") clearTimeout(this.timeout);
+			this.timeout = setTimeout(function(){
+				// --- Повераємо сторінку до верху
+				document.documentElement.scrollTop = 0;
+			},100);
+			sample.table.search(value);
+		},
+		"clear": true,
 	});
 	sample.table = new pagination(create("div",""),{
 		search : false,
@@ -912,6 +902,7 @@ app.page.clients = function(){
 		this.table.search();
 	};
 	
+	sample.bar.appendChild(sample.search);
 	sample.appendChild(sample.table);
 
 	sample.update();
