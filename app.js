@@ -682,7 +682,7 @@ app.page.home = function(){
 	day = new Date().getDate();
 	
 	sample = create("div","page-home");
-	sample.days = create("div","page-days",0,"",function(e){
+	sample.days = create("div","page-days numbers",0,"",function(e){
 		sample.day = e.target.innerText;
 		sample.update();
 		this.closest(".ux-view").close();
@@ -932,6 +932,23 @@ app.page.calculator = function(){
 		create("a",0,{"press":"on"},"7"),
 		create("a",0,{"press":"on"},"8"),
 		create("a",0,{"press":"on"},"9"),
+		create("a",0,{"press":"on"},"-"),
+		create("a",0,{"press":"on"},"4"),
+		create("a",0,{"press":"on"},"5"),
+		create("a",0,{"press":"on"},"6"),
+		create("a",0,{"press":"on"},"+"),
+		create("a",0,{"press":"on"},"1"),
+		create("a",0,{"press":"on"},"2"),
+		create("a",0,{"press":"on"},"3"),
+		create("a",0,{"press":"on"},"&#215;",function(e){
+			e.stopPropagation();
+			e.preventDefault();
+			app.page.number(function(val){
+				sample.action("x"+val);
+			});
+		}),
+		create("a",0,{"press":"on"},","),
+		create("a",0,{"press":"on"},"0"),
 		create("a",0,{"press":"on"},"c",{
 			"ontouchstart": function(){
 				this.long = setTimeout(function(){
@@ -945,18 +962,14 @@ app.page.calculator = function(){
 				clearTimeout(this.long);
 			},
 		}),
-		create("a",0,{"press":"on"},"4"),
-		create("a",0,{"press":"on"},"5"),
-		create("a",0,{"press":"on"},"6"),
-		create("a",0,{"press":"on"},"x2"),
-		create("a",0,{"press":"on"},"1"),
-		create("a",0,{"press":"on"},"2"),
-		create("a",0,{"press":"on"},"3"),
-		create("a",0,{"press":"on"},"x3"),
-		create("a",0,{"press":"on"},"0"),
-		create("a",0,{"press":"on"},","),
-		create("a",0,{"press":"on"},"+"),
-		create("a",0,{"press":"on"},"-"),
+		create("a",0,{"press":"on"},"&#247;",function(e){
+			e.stopPropagation();
+			e.preventDefault();
+			app.page.number(function(val){
+				sample.action("/"+val);
+			});
+		}),
+		
 	],function(e){
 		sample.action(e.target.innerText);
 	});
@@ -988,16 +1001,15 @@ app.page.calculator = function(){
 		this.result.scrollTop = this.result.scrollHeight;
 	}
 	sample.action = function(code){
-		let type,item,numb = parseInt(code);
-		
-		// --- 
-		/*
-		if(navigator.vibrate) {
-		    navigator.vibrate(50);
-		}
-		*/
-		
+		let type,item,val = 1,numb = parseInt(code);
+				
 		item = this.current;
+		
+		if(code[0] == "x" || code[0] == "/"){
+			val = code.slice(1);
+			val = parseFloat(val.replace(",","."));
+			code = code[0];
+		}
 		
 		if(!isNaN(numb)){
 			if(item == null){
@@ -1019,10 +1031,10 @@ app.page.calculator = function(){
 				item.del();
 			}else if(code == ","){
 				item.add(",");
-			}else if(code == "x2"){
-				item.set(item.value.replace(",",".")*2);
-			}else if(code == "x3"){
-				item.set(item.value.replace(",",".")*3);
+			}else if(code == "x"){
+				item.set(item.value.replace(",",".")*val);
+			}else if(code == "/"){
+				item.set(item.value.replace(",",".")/val);
 			}
 		}
 
@@ -1048,7 +1060,7 @@ app.page.calculator = function(){
 		value = value.replace("-","");
 		
 		item = create("div","item",{"minus":minus?"on":"no"},{
-			0: create("span",0,0,value),
+			0: create("span",0,0,NumberToText(value)),
 			1: create("a","del fa-remove",0,"",function(){
 				item.delete();
 			})
@@ -1587,4 +1599,41 @@ app.page.client = function(data,handler){
 	}
 
 	ux.modal({"content":sample,"theme":"modal-auto"}).open();
+};
+app.page.number = function(handler){
+	let sample;
+
+	sample = create("div","page-number",0,{
+		0: create("input",0,{"type":"number","step":0.01}),
+		1: create("div","numbers",0,[
+			create("a",0,{"press":"on"},1),
+			create("a",0,{"press":"on"},2),
+			create("a",0,{"press":"on"},3),
+			create("a",0,{"press":"on"},4),
+			create("a",0,{"press":"on"},5),
+			create("a",0,{"press":"on"},6),
+			create("a",0,{"press":"on"},7),
+			create("a",0,{"press":"on"},8),
+			create("a",0,{"press":"on"},9)
+		]),
+		2: create("button",0,0,app.lang("Виконати"),function(){
+			sample.send();
+		})
+	});
+	sample.children[1].onclick = function(e){
+		let val = parseInt(e.target.innerText);
+		if(isNaN(val)) val = 1;
+		sample.children[0].value = val;
+		// ---
+		sample.send();
+	}
+	sample.send = function(){
+		this.modal.close();
+		let val = parseFloat(this.children[0].value);
+		if(isNaN(val)) val = 1;
+		if(typeof handler == "function") handler(val);
+ 	};
+	sample.modal = ux.modal({"content":sample,"theme":"modal-auto"});
+
+	sample.modal.open();
 };
